@@ -21,7 +21,7 @@ class SensorsData():
         return {'x': self.x, 'y': self.y, 'z': self.z, 'lat': self.lat, 'lgn': self.lng, 'timestamp': self.timestamp}
 
 
-class onBoardPotholeEvent():
+class PotholeEvent():
     ''' Interface for event that identify a pothole, with attached data.
 
     Parameters:
@@ -29,9 +29,9 @@ class onBoardPotholeEvent():
     end_at = ending timestamp of detected pothole
     latitude = gps latitude assigned to pothole
     longitude = gps latitude assigned to pothole
-    attached_sensors_data = List[SensorData] occurred during onBoardPotholeEvent
-    attached_images = List[string] path or uid of images (to be defined) captured during onBoardPotholeEvent
-    attached_video = List[string] path or uid of video captured during onBoardPotholeEvent
+    attached_sensors_data = List[SensorData] occurred during PotholeEvent
+    attached_images = List[string] path or uid of images (to be defined) captured during PotholeEvent
+    attached_video = List[string] path or uid of video captured during PotholeEvent
     '''
 
     def __init__(self, start_at: int, end_at: int):
@@ -60,20 +60,20 @@ class onBoardPotholeEvent():
         pass
 
 
-class onBoardPotholeEventHistory():
+class PotholeEventHistory():
     ''' History of detected pothole events '''
 
     def __init__(self):
         super().__init__()
         self.history = []
 
-    def append(self, event: onBoardPotholeEvent, check_last=True):
+    def append(self, event: PotholeEvent, check_last=True):
         if check_last:
             if len(self.history) > 0 and (self.history[-1].overlap_event(event.start_at, event.end_at) or event.overlap_event(self.history[-1].start_at, self.history[-1].end_at)):
                 self.history.pop()
         self.history.append(event)
 
-    def timeseries_to_events(self, buffer_data: List[SensorsData], pothole_timeseries: List[int]) -> List[onBoardPotholeEvent]:
+    def timeseries_to_events(self, buffer_data: List[SensorsData], pothole_timeseries: List[int]) -> List[PotholeEvent]:
         events = []
         curr_event = {"start": None, "end": None}
         for index, t in enumerate(pothole_timeseries):
@@ -83,7 +83,7 @@ class onBoardPotholeEventHistory():
                 curr_event["start"] = index
             if t != 1 and curr_event["start"] is not None:
                 curr_event["end"] = index-1
-                new_event = onBoardPotholeEvent(
+                new_event = PotholeEvent(
                     buffer_data[curr_event["start"]].timestamp, buffer_data[curr_event["end"]].timestamp)
                 new_event.attached_sensors_data = buffer_data[curr_event["start"]                                                              : curr_event["end"]]
                 events.append(new_event)
@@ -91,7 +91,7 @@ class onBoardPotholeEventHistory():
         # If is started but not ended discard event
         return events
 
-    def to_list(self) -> List[onBoardPotholeEvent]:
+    def to_list(self) -> List[PotholeEvent]:
         return self.history
 
 class SensorsBuffer():
@@ -100,7 +100,7 @@ class SensorsBuffer():
         self.window_size = window_size
         self.detect_delay = detect_delay
         self.buffer = []
-        self.events_history = onBoardPotholeEventHistory()
+        self.events_history = PotholeEventHistory()
         self.timeseries_history = []
         self.timeseries_detected_history = []
         self.verbose = verbose
@@ -114,9 +114,9 @@ class SensorsBuffer():
         ''' append accelarator data to the buffer.'''
         self.buffer.append(data)
 
-    def analyze(self, force: bool = False) -> List[onBoardPotholeEvent]:
+    def analyze(self, force: bool = False) -> List[PotholeEvent]:
         '''  Analyze data in last chunk "window_size" of buffer.
-        Return a list of 'onBoardPotholeEvent' (empty list if no one pothole was detected, or buffer not ready).
+        Return a list of 'PotholeEvent' (empty list if no one pothole was detected, or buffer not ready).
         If force==True the chunk is always analyzed.
         If data in buffer is less then "window_size" the result might not be reliable.        
         '''
@@ -133,7 +133,7 @@ class SensorsBuffer():
                     self.events_history.append(e)
         return events
 
-    def _detect(self, data) -> List[onBoardPotholeEvent]:
+    def _detect(self, data) -> List[PotholeEvent]:
         out_timeseries = inference(data, verbose=self.verbose)[0]
         events = self.events_history.timeseries_to_events(
             self.buffer[-self.window_size:], out_timeseries)

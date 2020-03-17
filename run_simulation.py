@@ -1,6 +1,6 @@
 from simulate import SimulateSensors #,SimulateCamera
 import numpy as np
-from main import on_update_sensor, buffer
+from main import MainProcess
 from utils import plot_timeseries_clf
 import threading
 import argparse
@@ -23,7 +23,7 @@ def on_end():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run onboard simulation test for RaspberryPi')
-    parser.add_argument('--data_path',  type=str, nargs=1, help='path of mocked data csv')
+    parser.add_argument('--data_path',  type=str, help='path of mocked data csv', required=True)
     parser.add_argument('--freq', type=float, default=0.2, help='frequency of obtained data from sensors')
     parser.add_argument('--speed', type=float, default=1, help='speed of simulation (es. 2 = 2x)')  
     parser.add_argument('--verbose', action='store_true', help="verbose mode, otherwise silent") 
@@ -31,11 +31,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print("Data path", args.data_path[0])
-    sensor_simulation = SimulateSensors(args.data_path[0], freq=args.freq, speed=args.speed, verbose=args.verbose)
+    print("Data path", args.data_path)
+    main_process = MainProcess()
+    sensor_simulation = SimulateSensors(args.data_path, freq=args.freq, speed=args.speed, verbose=args.verbose)
     # sensor_simulation.on_end(on_end)
-    sensor_simulation.run(on_update_sensor)
-    if args.monitor:
-        buffer.serve_websocket_data(freq=args.freq*2, port=ANALYZED_FROM_SENSORS_PORT)
-        sensor_simulation.serve_websocket_data(freq=args.freq*2, port=INPUT_SENSORS_PORT)
     # camera_simulation = 
+    sensor_simulation.run(main_process.on_update_sensor)
+
+    if args.monitor:
+        main_process.sensor_buffer.serve_websocket_data(freq=args.freq*2, port=ANALYZED_FROM_SENSORS_PORT)
+        sensor_simulation.serve_websocket_data(freq=args.freq*2, port=INPUT_SENSORS_PORT)
