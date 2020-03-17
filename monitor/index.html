@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+</head>
+
+<body>
+    <h1>Hello, world!</h1>
+    <pre id="monitor"></pre>
+    <div class="col" id="accelerometer_plot" style="height:300px; width:100vw;"></div>
+    <div class="col" id="detect_plot" style="height:300px; width:100vw;"></div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script>
+        const ANALYZED_FROM_SENSORS_PORT = 8761
+        const INPUT_SENSORS_PORT = 8771
+
+        function startWebsocket(callback, port, json = true) {
+            let ws = new WebSocket('ws://localhost:' + port)
+
+            ws.onmessage = function (e) {
+                let data = json ? JSON.parse(e.data) : e.data
+                callback(data)
+            }
+
+            ws.onclose = function () {
+                // connection closed, discard old websocket and create a new one in 5s
+                ws = null
+                console.log("Waiting for connection on port=" + port)
+                setTimeout(startWebsocket(callback, port), 2000)
+            }
+            return ws
+        }
+
+        // ACCELEROMETER INPUT
+        function plot_accelerometer_inputs(el, data, title) {
+            length = data[0].length
+            points = Array.from({ length }, (_, i) => i);
+            lines = []
+            for (d of data) {
+                let line = {
+                    x: points,
+                    y: d
+                };
+                lines.push(line)
+                console.log(line)
+            }
+            let layout = {
+                showlegend: false,
+                margin: {
+                    l: 20,
+                    r: 20,
+                    b: 20,
+                    t: 40,
+                    pad: 1
+                },
+                title: title
+            };
+            Plotly.newPlot(el, lines, layout, { staticPlot: true });
+        }
+        startWebsocket((data) => { 
+            console.log(ANALYZED_FROM_SENSORS_PORT, data);
+            plot_accelerometer_inputs("detect_plot", data, "Detected potholes")
+        }, ANALYZED_FROM_SENSORS_PORT)
+        startWebsocket((data) => {
+            console.log(INPUT_SENSORS_PORT, data);
+            plot_accelerometer_inputs("accelerometer_plot", data, "Real-time accelerometer sensor inputs")
+        }, INPUT_SENSORS_PORT)
+
+    </script>
+</body>
+
+</html>

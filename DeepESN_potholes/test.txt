@@ -1,0 +1,70 @@
+Loading data from datasets/accelerometer_2020-03-06T111304369Z.csv
+                     timestamp         x         y         z  target
+0     2020-03-06T11:10:31.337Z  9.012459  0.857417  2.502795    -1.0
+1     2020-03-06T11:10:31.515Z  9.041199  0.866997  3.106340    -1.0
+2     2020-03-06T11:10:31.593Z  8.638836  1.027463  3.398533    -1.0
+3     2020-03-06T11:10:31.738Z  9.120234  0.632285  2.926714    -1.0
+4     2020-03-06T11:10:31.854Z  9.029224  0.843047  2.816543    -1.0
+...                        ...       ...       ...       ...     ...
+1722  2020-03-06T11:13:03.475Z  9.225616 -0.251477  3.192561    -1.0
+1723  2020-03-06T11:13:03.536Z  8.954978 -0.881367  2.687212    -1.0
+1724  2020-03-06T11:13:03.600Z  8.952583 -0.718506  2.988985    -1.0
+1725  2020-03-06T11:13:03.748Z  9.283096 -0.474214  2.706372    -1.0
+1726  2020-03-06T11:13:03.898Z  8.820857 -0.969983  2.490820    -1.0
+
+[1727 rows x 5 columns]
+# DATASET INPUT SIZE: (1, 3, 1727), DATASET TRAGET SIZE: (1, 1, 1727)
+#-> CONSIDERED SLICE SIZE: 2
+--------------------------------------------------
+NORMALIZATION mean=[ 7.80477587 -1.12897169  4.1011338 ], std=[19.00083387  5.526248   10.63356062]
+----------
+_X_train: (1, 3, 1381)
+y_train: (1, 1, 1381)
+_X_test: (1, 3, 200)
+y_test: (1, 1, 200)
+----------
+DATASET TR_LEN=1, TS_LEN=1
+(1, 3, 1381)
+Tested parameters:  [{'Nl': 4, 'Nr': 30, 'input_mul': 1, 'iss': 0.5, 'lis': 0.1, 'rhos': 0.5}]
+Estimated running time: 5 min.
+Testing params: {'Nl': 4, 'Nr': 30, 'input_mul': 1, 'iss': 0.5, 'lis': 0.1, 'rhos': 0.5}
+Config has not param=input_mul
+
+On validation:
+
+Training...
+init DeepESN...done.
+train readout...done.
+ESN saved in ./pretraineds/model_0_mar_6.h5f
+BEST Nl= 4
+BEST rhos= [0.5, 0.5, 0.5, 0.5]
+BEST Nr= 30
+Predicting on train...
+STATE OUT (1, 120, 1381) in sec 0.15004611015319824
+STATE OUT AFTER TRANSIENT (1, 120, 1381) in sec 0.0001461505889892578
+LINEAR OUT (1, 1381) in sec 0.0006685256958007812
+OUT SHAPE (1, 1381)
+BEST_ESN TRAIN SCORE: 0.8669249152019735 in 0.1531965732574463 sec.
+Predicting on test...
+STATE OUT (1, 120, 200) in sec 0.03160977363586426
+STATE OUT AFTER TRANSIENT (1, 120, 200) in sec 2.6226043701171875e-05
+LINEAR OUT (1, 200) in sec 0.003374814987182617
+OUT SHAPE (1, 200)
+BEST_ESN TEST SCORE: 0.809946151409566 in 0.036594390869140625 sec.
+Area under the ROC curve : 0.907401
+        fpr       tpr    1-fpr        tf  thresholds
+27  0.19084  0.811594  0.80916  0.002434    0.026442
+YTRUE SHAPE (1, 200)
+              precision    recall  f1-score   support
+
+        -1.0       0.89      0.82      0.85       131
+         1.0       0.70      0.81      0.75        69
+
+    accuracy                           0.81       200
+   macro avg       0.80      0.81      0.80       200
+weighted avg       0.83      0.81      0.82       200
+
+--------------------------------------------------
+(1, 3, 1381)
+(1, 200)
+(1, 200)

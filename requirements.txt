@@ -1,0 +1,7 @@
+websockets
+matplotlib
+seaborn
+scikit-learn
+numpy
+pandas
+tqdm

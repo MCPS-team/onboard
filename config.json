@@ -1,0 +1,6 @@
+{
+    "window_size": 100,
+    "detect_delay": 10,
+    "depot_location": [1,1],
+    "depot_radius": 50
+}
