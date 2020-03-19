@@ -21,6 +21,16 @@ def on_end():
         plt = plot_timeseries_clf(X, y_pred, transient=0)
         plt.show()
 
+'''
+Esempio di utilizzo:
+Esegui:
+python run_simulation.py -h per vedere i parametri
+python run_simulation.py --data_path ./simulate/data/accelerometer_2020-03-06T111304369Z.csv --verbose
+
+Per vedere anche la dimostrazione:
+Apri ./monitor/index.html nel browser
+python run_simulation.py --data_path ./simulate/data/accelerometer_2020-03-06T111304369Z.csv --speed 2 --verbose --monitor
+'''
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run onboard simulation test for RaspberryPi')
     parser.add_argument('--data_path',  type=str, help='path of mocked data csv', required=True)

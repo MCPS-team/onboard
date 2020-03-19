@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from utils import serve_websocket_data
 
-
+# Usato per simulare fps perchè lanica lazione ogni "interval" secondi
 class setInterval:
     ''' Run 'action' each 'interval' in async way. 
     Like javascript setInterval, see it to know behavior '''
@@ -30,7 +30,6 @@ class setInterval:
 # Usa class base per creare modificare SimulateCamera
 # Prendi ispirazione a SimulateSensors
 
-
 class BaseSimulation:
     def __init__(self, freq=0.2, speed=1, verbose=1):
         self._freq = freq
@@ -40,7 +39,7 @@ class BaseSimulation:
         self.fn_on_end = None
 
     def get_data_until(self, index):
-        ''' Return the data at next step, otherwise None'''
+        ''' Return all data until step "index"'''
         pass
 
     def next_data(self):
