@@ -1,4 +1,4 @@
-from detect_interface import SensorsData, PotholeEvent, SensorsBuffer
+from buffers import SensorsData, PotholeEvent, SensorsBuffer, CameraBuffer
 from config import config
 
 

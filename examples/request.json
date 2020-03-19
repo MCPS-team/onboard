@@ -1,0 +1,29 @@
+/* Upload buche registrate
+i campi [?] verranno inviati comunque ma non sono necessari, ma magari potrebbero essre utili per analisi future,
+quindi vedi tu se salvarli.
+*/
+[{
+    "latitude": 52.3547498,
+    "longitude": 4.8339211,
+    "start_at": "2020-03-18T13:58:56.110Z", // [?] ISO 8601 format
+    "end_at": "2020-03-18T13:58:56.110Z", // [?] ISO 8601 format
+    "attached_sensors_data": [{
+        "timestamp": 1584610317178, // Unix timestamp
+        "x": 0.166348984,
+        "y": 8.52214945,
+        "z": 5.461383058,
+        "latitude": 52.3547498,
+        "longitude": 4.8339211
+    },...],
+    "attached_images": [{
+        // Questa è una mia idea ma meglio che chiedi a Gian come l'ha pensato.
+        "timestamp": 1584610317178, // Unix timestamp
+        "filename": "filename_1584610317178" // identificativo unico per il file.
+    },...]
+},...]
+
+/* 
+L'upload delle immagini verrà fatto con una chiamata differente che predisporrà Gian
+per evitare di raggiungere il timeuot delle richiesta, e quindi perde alcune immagini,
+direi di fare l'upload di N immagini alla volta.
+*/

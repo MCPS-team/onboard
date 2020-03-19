@@ -1,4 +1,4 @@
-from simulate import SimulateSensors #,SimulateCamera
+from simulate import SimulateSensors ,SimulateCamera
 import numpy as np
 from main import MainProcess
 from utils import plot_timeseries_clf
