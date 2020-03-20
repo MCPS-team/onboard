@@ -1,4 +1,7 @@
-from detect_interface import PotholeEvent, PotholeEventHistory, SensorsData
+from .interface import PotholeEvent, PotholeEventHistory, SensorsData
+from typing import List
+import numpy as np
+from DeepESN_potholes.inference import inference
 
 class SensorsBuffer():
     def __init__(self, window_size: int = 100, detect_delay: int = 10, verbose: int = 0):
@@ -19,6 +22,8 @@ class SensorsBuffer():
     def append(self, data: SensorsData):
         ''' append accelarator data to the buffer.'''
         self.buffer.append(data)
+        if len(self.buffer)>1 and self.buffer[-1].timestamp == self.buffer[-1].timestamp:
+            print(len(self.buffer)-1, "is repeated!!!!!!")
 
     def analyze(self, force: bool = False) -> List[PotholeEvent]:
         '''  Analyze data in last chunk "window_size" of buffer.
