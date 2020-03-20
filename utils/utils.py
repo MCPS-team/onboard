@@ -57,3 +57,24 @@ def serve_websocket_data(fn_get_data, freq=0.2, host='localhost', port=8764):
         loop, ws, fn_get_data, freq, host, port, ))
     t.setDaemon
     t.start()
+
+
+class setInterval:
+    ''' Run 'action' each 'interval' in async way. 
+    Like javascript setInterval, see it to know behavior '''
+
+    def __init__(self, interval, action):
+        self.interval = interval
+        self.action = action
+        self.stopEvent = threading.Event()
+        thread = threading.Thread(target=self.__setInterval)
+        thread.start()
+
+    def __setInterval(self):
+        nextTime = time.time()+self.interval
+        while not self.stopEvent.wait(nextTime-time.time()):
+            nextTime += self.interval
+            self.action()
+
+    def cancel(self):
+        self.stopEvent.set()

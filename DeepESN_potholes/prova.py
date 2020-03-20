@@ -2,7 +2,6 @@ import os
 import numpy as np
 from DeepESN import DeepESN_skl
 from utils import F1_score, best_config_PH, load_PH, plot_timeseries_clf, split_timeseries
-from sklearn.cluster import DBSCAN
 import time
 # fix a seed for the reproducibility of results
 np.random.seed(7)
@@ -62,8 +61,8 @@ def main():
     result = np.concatenate(result, axis=1)
     print(result.shape)
     plot_potholes(result)
-    plt = plot_timeseries_clf(origin_X, result, transient=CHUNK_LEN+(origin_X.shape[-1]%CHUNK_LEN)-STEP)
-    plt.show()
+    # plt = plot_timeseries_clf(origin_X, result, transient=CHUNK_LEN+(origin_X.shape[-1]%CHUNK_LEN)-STEP)
+    # plt.show()
 
     print("After clustering")
     result = np.array([cluster_ts(r) for r in result])

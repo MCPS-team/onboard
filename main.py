@@ -1,15 +1,15 @@
 from buffers import SensorsData, PotholeEvent, SensorsBuffer, CameraBuffer
-from config import config
 
 
 class MainProcess():
     ''' Classe principale che racchide tutto il processo di analisi e raccolta dati '''
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
-        self.sensor_buffer = SensorsBuffer(window_size=config.window_size, detect_delay=config.detect_delay, verbose=1)
+        self.config = config
+        self.sensor_buffer = SensorsBuffer(config=config, window_size=config.window_size, detect_delay=config.detect_delay, verbose=1)
         # self.camera_buffer = 
 
-    def on_update_sensor(self, timestamp, x, y, z, lat=None, lng=None):
+    def on_update_sensors(self, timestamp, x, y, z, lat=None, lng=None):
         acc_data = SensorsData(timestamp, x, y, z, lat, lng)
         self.sensor_buffer.append(acc_data)
         events = self.sensor_buffer.analyze()
@@ -21,6 +21,15 @@ class MainProcess():
                                                                             event.start_at, event.end_at))
 
     def on_update_camera(self, ):
+        pass
+
+    def on_near_depot(self, ):
+        pass
+
+    def upload_sensors_data(self, ):
+        pass
+
+    def upload_sensors_images(self, ):
         pass
 
 

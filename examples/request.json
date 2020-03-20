@@ -3,7 +3,7 @@ i campi [?] verranno inviati comunque ma non sono necessari, ma magari potrebber
 quindi vedi tu se salvarli.
 */
 [{
-    "bumpID": "xxx",
+    "uid": "16fd2706-8baf-433b-82eb-8c7fada847da", //UUID objects according to RFC 4122
     "latitude": 52.3547498,
     "longitude": 4.8339211,
     "start_at": "2020-03-18T13:58:56.110Z", // [?] ISO 8601 format

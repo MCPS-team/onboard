@@ -8,8 +8,8 @@ import time
 np.random.seed(7)
 
 PRETAINED_MODEL_PATH = './pretraineds/model_0_mar_6.h5f'
-STEP = 10
-CHUNK_LEN = 50
+STEP = 20
+CHUNK_LEN = 200
 
 
 def plot_potholes(y_pred):
@@ -25,12 +25,18 @@ def main():
 
     print("Loading data from {}".format(path))
 
-    dataset, Nu, error_function, optimization_problem, _X, y, _, _ = load_PH(
+    dataset, Nu, error_function, optimization_problem, _X, y, _, _, unorm_X_train = load_PH(
         path, F1_score)
+
+    # remove exceded datat for step
+    print("_X", _X.shape)
+    _X = _X[:,:,:STEP*(_X.shape[-1]//STEP)]
+    unorm_X_train = unorm_X_train[:,:,:STEP*(unorm_X_train.shape[-1]//STEP)]
+    print("_X", _X.shape)
 
     origin_X = _X
     X = split_timeseries(_X, chunk_len=CHUNK_LEN, step=STEP)
-    y = split_timeseries(y, chunk_len=CHUNK_LEN, step=STEP)
+    # y = split_timeseries(y, chunk_len=CHUNK_LEN, step=STEP)
     print("----------")
     print("X:", X.shape)
     print("----------")
@@ -40,7 +46,7 @@ def main():
     # load configuration for Earthquake task
     _configs = best_config_PH(list(range(X.shape[0])), Nu)
 
-    result = []
+    result = [np.zeros((1, CHUNK_LEN-STEP))]
 
     deep_esn = DeepESN_skl(configs=_configs.to_dict(),
                            error_function=error_function)
@@ -62,14 +68,14 @@ def main():
     result = np.concatenate(result, axis=1)
     print(result.shape)
     plot_potholes(result)
-    plt = plot_timeseries_clf(origin_X, result, transient=CHUNK_LEN+(origin_X.shape[-1]%CHUNK_LEN)-STEP)
+    plt = plot_timeseries_clf(unorm_X_train, result, transient=0)
     plt.show()
 
     print("After clustering")
     result = np.array([cluster_ts(r) for r in result])
     plot_potholes(result)
     plt = plot_timeseries_clf(
-        origin_X, result, transient=CHUNK_LEN+(origin_X.shape[-1] % CHUNK_LEN)-STEP)
+        unorm_X_train, result, transient=0)
     plt.show()
 
 

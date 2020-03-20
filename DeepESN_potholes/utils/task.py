@@ -124,9 +124,10 @@ def load_PH(path, metric_function):
 
     print("#-> CONSIDERED SLICE SIZE: {}".format(len(X_train) + len(Y_train)))
     print("-" * 50)
+    unorm_X_train = np.array(X_train)
     X_train, X_test = normalize_input(X_train, X_test)
 
-    return dataset, Nu, error_function, optimization_problem, X_train, Y_train, X_test, Y_test
+    return dataset, Nu, error_function, optimization_problem, X_train, Y_train, X_test, Y_test, unorm_X_train
 
 
 def normalize_input(X_train, X_test):
@@ -135,7 +136,6 @@ def normalize_input(X_train, X_test):
     a normalization coefficient, and applying the same coefficient to all
     the data.
     '''
-
     TR_data=X_train
     Nu=len(TR_data[0])
 
@@ -145,7 +145,7 @@ def normalize_input(X_train, X_test):
     means=np.mean(flat_inp, axis=1)
     stds=np.std(flat_inp, axis=1)
 
-    print("NORMALIZATION mean={}, std={}".format(means, stds))
+    print("NORMALIZATION mean={}, std={}".format(np.array2string(means, precision=16, separator=','),np.array2string(stds, precision=12, separator=',')))
 
     for i in range(Nu):
         X_train[:, i]=(X_train[:, i] -
@@ -164,9 +164,11 @@ def split_dataset(data, split_perc=0.7):
 def split_timeseries(data, chunk_len=100, step=1):
     new_data = []
     length = data.shape[-1]
-    offset = length%chunk_len
-    for i in range(offset, length, step):
-        new_data.append(data[:, : , i:i+chunk_len])
-        if i+chunk_len >= length:
+    # print("Split timeseries length", length)
+    for i in range(0, length, step):
+        if (i+chunk_len) > length:
             break
+        # print("data splitted in ", i, i+chunk_len)
+        new_data.append(data[:,:,i:i+chunk_len])
+        
     return np.concatenate(new_data, axis=0)

@@ -35,6 +35,7 @@
     <script>
         const ANALYZED_FROM_SENSORS_PORT = 8761
         const INPUT_SENSORS_PORT = 8771
+        let el_monitor = document.querySelector('#monitor')
 
         function startWebsocket(callback, port, json = true) {
             let ws = new WebSocket('ws://localhost:' + port)
@@ -82,6 +83,7 @@
         startWebsocket((data) => { 
             console.log(ANALYZED_FROM_SENSORS_PORT, data);
             plot_accelerometer_inputs("detect_plot", data, "Detected potholes")
+            // el_monitor.textContent = ""
         }, ANALYZED_FROM_SENSORS_PORT)
         startWebsocket((data) => {
             console.log(INPUT_SENSORS_PORT, data);
