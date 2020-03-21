@@ -40,8 +40,8 @@ if __name__ == '__main__':
         description='Run onboard simulation test for RaspberryPi')
     parser.add_argument('--data_path',  type=str,
                         help='path of mocked data csv', required=True)
-    parser.add_argument('--freq', type=float, default=0.0416,
-                        help='frequency of obtained data from sensors')
+    parser.add_argument('--video_path',  type=str,
+                        help='path of mocked video', required=True)
     parser.add_argument('--speed', type=float, default=1,
                         help='speed of simulation (es. 2 = 2x)')
     parser.add_argument('--verbose', action='store_true',
@@ -54,11 +54,14 @@ if __name__ == '__main__':
     print("Data path", args.data_path)
     main_process = MainProcess(config)
     sensor_simulation = SimulateSensors(
-        args.data_path, freq=args.freq, speed=args.speed, verbose=args.verbose)
+        args.data_path, freq=1/config.sensors_freq, speed=args.speed, verbose=args.verbose)
+    camera_simulation = SimulateCamera(
+        args.video_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose)
     # sensor_simulation.on_end(on_end)
 
     # camera_simulation =
     sensor_simulation.run(main_process.on_update_sensors)
+    camera_simulation.read_video(main_process.on_update_camera)
 
     if args.monitor:
         main_process.sensor_buffer.serve_websocket_data(

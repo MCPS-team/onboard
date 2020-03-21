@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 from utils import serve_websocket_data
 
+
 # Usato per simulare fps perchè lanica lazione ogni "interval" secondi
 class setInterval:
     ''' Run 'action' each 'interval' in async way. 
