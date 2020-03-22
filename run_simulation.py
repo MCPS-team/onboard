@@ -42,6 +42,8 @@ if __name__ == '__main__':
                         help='path of mocked data csv', required=True)
     parser.add_argument('--video_path',  type=str,
                         help='path of mocked video', required=True)
+    parser.add_argument('--info_path',  type=str,
+                        help='path of data [frame_index, timestamp]', required=True)
     parser.add_argument('--speed', type=float, default=1,
                         help='speed of simulation (es. 2 = 2x)')
     parser.add_argument('--verbose', action='store_true',
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     sensor_simulation = SimulateSensors(
         args.data_path, freq=1/config.sensors_freqHz, speed=args.speed, verbose=args.verbose)
     camera_simulation = SimulateCamera(
-        args.video_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose)
+        args.video_path, args.info_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose)
     # sensor_simulation.on_end(on_end)
 
     # camera_simulation =

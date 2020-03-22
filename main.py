@@ -42,7 +42,6 @@ class MainProcess():
         Se si allontata interrompe l'azione
         '''
         dist = euclidean_dist(lat_lng, self.config.depot_location)
-        print(dist, self.config.depot_radius)
         # 0.00001 degrees is about a meter
         if dist <= self.config.depot_radius and not self.checking_edge_connection:
             self.checking_edge_connection = setInterval(self.config.retry_connection_delay, self.try_wireless_connection)
