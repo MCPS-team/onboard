@@ -54,14 +54,14 @@ if __name__ == '__main__':
     print("Data path", args.data_path)
     main_process = MainProcess(config)
     sensor_simulation = SimulateSensors(
-        args.data_path, freq=1/config.sensors_freq, speed=args.speed, verbose=args.verbose)
+        args.data_path, freq=1/config.sensors_freqHz, speed=args.speed, verbose=args.verbose)
     camera_simulation = SimulateCamera(
         args.video_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose)
     # sensor_simulation.on_end(on_end)
 
     # camera_simulation =
     sensor_simulation.run(main_process.on_update_sensors)
-    camera_simulation.read_video(main_process.on_update_camera)
+    camera_simulation.run(main_process.on_update_camera)
 
     if args.monitor:
         main_process.sensor_buffer.serve_websocket_data(

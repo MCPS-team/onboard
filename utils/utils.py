@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import math
 from matplotlib.animation import FuncAnimation
 import asyncio
 import websockets
@@ -57,6 +58,12 @@ def serve_websocket_data(fn_get_data, freq=0.2, host='localhost', port=8764):
         loop, ws, fn_get_data, freq, host, port, ))
     t.setDaemon
     t.start()
+
+def euclidean_dist(lat_lng_1, lat_lng_2):
+    x = (lat_lng_1[0], lat_lng_2[0])
+    y = (lat_lng_1[1], lat_lng_2[1])
+    dist = math.sqrt(sum([(a - b) ** 2 for a, b in zip(x, y)]))
+    return dist
 
 
 class setInterval:

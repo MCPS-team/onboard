@@ -1,6 +1,8 @@
 # Qui calsse camera buffer
 import cv2
 import time
+import threading
+import os
 
 
 class FrameBuffer():
@@ -32,7 +34,7 @@ class FrameBuffer():
     def __flush(self):
         self.buffer.clear()
 
-    def poth_hole_detected(self):
+    def pothole_detected(self):
         with self.condition:
             if not self.condition.acquire():
                 self.condition.wait()
