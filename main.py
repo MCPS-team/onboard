@@ -62,8 +62,11 @@ class MainProcess():
         self.upload_sensors_data()
         self.upload_frames()
 
-    def upload_sensors_data(self, ):
+    def upload_pothole_events(self, ):
+        # Upload potholes_event objects
+        # TODO implementare
         pass
 
     def upload_frames(self, ):
+        # TODO implementare
         pass

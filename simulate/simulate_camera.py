@@ -50,7 +50,7 @@ class SimulateCamera(BaseSimulation):
                 frame_wrapped = FrameWrapper(frame, timestamp)
                 callback(frame_wrapped)
 
-                cv2.imshow('frame', gray)
+                # cv2.imshow('frame', gray)
 
                 time.sleep(self._freq)
             else:

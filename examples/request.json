@@ -18,7 +18,7 @@ quindi vedi tu se salvarli.
     },...],
     "attached_images": [{
         // Questa è una mia idea ma meglio che chiedi a Gian come l'ha pensato.
-        "timestamp": 1584610317178, // Unix timestamp
+        // "timestamp": 1584610317178, // Unix timestamp
         "filename": "filename_1584610317178" // identificativo unico per il file.
     },...]
 },...]
