@@ -11,7 +11,9 @@ class SimulateSensors(BaseSimulation):
         '''
         super().__init__(freq, speed, verbose)
         self.df = pd.read_csv(
-            data_path,  names=['timestamp', 'x', 'y', 'z', 'target'])  # TODO add 'lat' 'lng'
+            data_path,  names=['timestamp', 'x', 'y', 'z','lat','lng','target'])  # TODO add 'lat' 'lng'
+
+        print(self.df['timestamp'][0])
         self.df['timestamp'] = self.df['timestamp'].apply(
             lambda iso_date: datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S.%fZ"))
         self.df_index = 0
@@ -25,7 +27,7 @@ class SimulateSensors(BaseSimulation):
             index = len(self.df['timestamp']) - 1
 
         x = [self.df['timestamp'][:index], self.df['x'][:index],
-             self.df['y'][:index], self.df['z'][:index]]
+             self.df['y'][:index], self.df['z'][:index], self.df['lat'][:index],self.df['lng'][:index]]
         return x
 
     def next_data(self):
@@ -34,7 +36,7 @@ class SimulateSensors(BaseSimulation):
             return None
 
         x = [self.df['timestamp'][self.df_index], self.df['x'][self.df_index],
-             self.df['y'][self.df_index], self.df['z'][self.df_index]]
+             self.df['y'][self.df_index], self.df['z'][self.df_index], self.df['lat'][self.df_index],self.df['lng'][self.df_index]]
         self.df_index += 1
         return x
 
@@ -55,7 +57,7 @@ class SimulateSensors(BaseSimulation):
                 return False
 
             callback(data[0], data[1], data[2],
-                     data[3])  # TODO add 'lat' 'lng'
+                     data[3], data[4], data[5])  # TODO add 'lat' 'lng'
 
             if self.verbose:
                 diff = time.time()-start_time
