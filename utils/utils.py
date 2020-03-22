@@ -5,7 +5,7 @@ import asyncio
 import websockets
 import json
 import threading
-
+import time
 
 def show_animated_plot(fn_get_data, window_size=1000, freq=0.2, xlabel='Time', ylabel='Acc'):
     ''' Show animetd plot of updated each 'freq' calling 'fn_get_data' '''
@@ -60,9 +60,7 @@ def serve_websocket_data(fn_get_data, freq=0.2, host='localhost', port=8764):
     t.start()
 
 def euclidean_dist(lat_lng_1, lat_lng_2):
-    x = (lat_lng_1[0], lat_lng_2[0])
-    y = (lat_lng_1[1], lat_lng_2[1])
-    dist = math.sqrt(sum([(a - b) ** 2 for a, b in zip(x, y)]))
+    dist = math.sqrt(abs(lat_lng_1[0]-lat_lng_2[0])**2 + abs(lat_lng_1[1]- lat_lng_2[1])**2)
     return dist
 
 

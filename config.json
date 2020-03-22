@@ -1,14 +1,23 @@
 {
-    "data_normalization_mean": [ 7.804775865180694 ,-1.128971686992716 , 4.1011338038592555],
-    "data_normalization_std": [19.00083387166 , 5.526247999263, 10.633560623857],
+    "data_normalization_mean": [
+        7.804775865180694,
+        -1.128971686992716,
+        4.1011338038592555
+    ],
+    "data_normalization_std": [
+        19.00083387166,
+        5.526247999263,
+        10.633560623857
+    ],
     "window_size": 200,
     "detect_delay": 20,
     "depot_location": [
-        1,
-        1
+        45.5130616,
+        10.775293
     ],
     "depot_radius": 0.0005,
     "sensors_freqHz": 24,
     "camera_fps": 8,
-    "camera_buffer_size": 80
+    "camera_buffer_size": 80,
+    "retry_connection_delay": 1
 }

@@ -42,18 +42,21 @@ class MainProcess():
         Se si allontata interrompe l'azione
         '''
         dist = euclidean_dist(lat_lng, self.config.depot_location)
+        print(dist, self.config.depot_radius)
         # 0.00001 degrees is about a meter
         if dist <= self.config.depot_radius and not self.checking_edge_connection:
-            self.checking_edge_connection = setInterval(5, self.try_wireless_connection)
+            self.checking_edge_connection = setInterval(self.config.retry_connection_delay, self.try_wireless_connection)
         elif dist > self.config.depot_radius and self.checking_edge_connection:
             self.checking_edge_connection.cancel()
 
     def try_wireless_connection(self):
         # Wrapper per connesione wifi
         # Chiama on on_edge_connection se riesce a collegarsi
-        # Quando è connesso chiama self.checking_edge_connection.cancel() per non provare più a connetersi 
+        # Quando è connesso chiama self.checking_edge_connection.cancel() per non provare più a connettersi 
         # e poi chiama on_edge_connection
-        pass
+        print("!!!--In deposito--!!!"*5)
+        self.checking_edge_connection.cancel()
+        return
 
     def on_edge_connection(self):
         # quando connesso al wifi edge
