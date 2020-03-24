@@ -18,7 +18,8 @@ class SensorsData():
         self.lng = lng
 
     def to_dict(self):
-        return {'x': self.x, 'y': self.y, 'z': self.z, 'latitude': self.lat, 'longitude': self.lng, 'timestamp': self.timestamp}
+        return {'x': self.x, 'y': self.y, 'z': self.z, 'latitude': self.lat, 'longitude': self.lng,
+                'timestamp': str(self.timestamp)}
 
 
 class PotholeEvent():
@@ -57,7 +58,18 @@ class PotholeEvent():
         return overlap_left or overlap_left or contain_in
 
     def to_dict(self):
-        pass
+        attached_sensor_data = []
+        [attached_sensor_data.append(data.to_dict()) for data in self.attached_sensors_data]
+        attached_frames = []
+        [attached_frames.append({"filename": frame}) for frame in self.attached_images]
+        return {"bumpID": str(self.uid),
+                "latitude": self.latitude,
+                "longitude": self.longitude,
+                "start_at": str(self.start_at),
+                "end_at": str(self.end_at),
+                "attached_sensors_data": attached_sensor_data,
+                "attached_images": attached_frames
+                }
 
 
 class PotholeEventHistory():
@@ -69,7 +81,9 @@ class PotholeEventHistory():
 
     def append(self, event: PotholeEvent, check_last=True):
         if check_last:
-            if len(self.history) > 0 and (self.history[-1].overlap_event(event.start_at, event.end_at) or event.overlap_event(self.history[-1].start_at, self.history[-1].end_at)):
+            if len(self.history) > 0 and (
+                    self.history[-1].overlap_event(event.start_at, event.end_at) or event.overlap_event(
+                    self.history[-1].start_at, self.history[-1].end_at)):
                 self.history.pop()
         self.history.append(event)
 
@@ -82,10 +96,10 @@ class PotholeEventHistory():
             if t == 1 and curr_event["start"] is None:
                 curr_event["start"] = index
             if t != 1 and curr_event["start"] is not None:
-                curr_event["end"] = index-1
+                curr_event["end"] = index - 1
                 new_event = PotholeEvent(
                     buffer_data[curr_event["start"]].timestamp, buffer_data[curr_event["end"]].timestamp)
-                new_event.attached_sensors_data = buffer_data[curr_event["start"]                                                              : curr_event["end"]]
+                new_event.attached_sensors_data = buffer_data[curr_event["start"]: curr_event["end"]]
                 events.append(new_event)
                 curr_event = {"start": None, "end": None}
         # If is started but not ended discard event

@@ -1,6 +1,14 @@
+import datetime
+import os
+import shutil
+from datetime import timedelta
+import requests
+import config
 from buffers import SensorsData, PotholeEvent, SensorsBuffer, FrameBuffer
 from utils import euclidean_dist, setInterval
 import time
+from dotenv import load_dotenv
+
 
 
 class MainProcess():
@@ -11,7 +19,7 @@ class MainProcess():
         self.config = config
         self.sensor_buffer = SensorsBuffer(
             config=config, window_size=config.window_size, detect_delay=config.detect_delay, verbose=1)
-        self.frame_buffer = FrameBuffer(config.camera_buffer_size, "./frames/")
+        self.frame_buffer = FrameBuffer(config.camera_buffer_size, config.frames_path)
         self.last_timestap = time.time()
         self.checking_edge_connection = None
         # self.camera_buffer =
@@ -49,24 +57,74 @@ class MainProcess():
             self.checking_edge_connection.cancel()
 
     def try_wireless_connection(self):
-        # Wrapper per connesione wifi
-        # Chiama on on_edge_connection se riesce a collegarsi
-        # Quando è connesso chiama self.checking_edge_connection.cancel() per non provare più a connettersi 
-        # e poi chiama on_edge_connection
-        print("!!!--In deposito--!!!"*5)
+        load_dotenv()
+        SSID = os.getenv('SSID')
+        PSW = os.getenv('SSID_PSW')
+        #os.system(f'nmcli device wifi con "{SSID}" password "{PSW}"')
+
+        #TODO mokkare tentativo di connessione in modo da capire se si connette o meno e spostare tutto questo sotto in un blocco if
+
         self.checking_edge_connection.cancel()
+        self.on_edge_connection()
+
         return
+
+    def try_connection(self):
+        return True
 
     def on_edge_connection(self):
         # quando connesso al wifi edge
-        self.upload_sensors_data()
-        self.upload_frames()
+        attached_frames = self.attach_frames()
+        self.upload_pothole_events()
+        self.upload_frames(attached_frames)
+
+    def attach_frames(self):
+        frames = list(os.walk(config.config.frames_path))[0][2]
+        attached_frames = []
+
+        #clean folder from hidden files
+        [frames.remove(x) for x in frames if x.find(".png") == -1]
+
+        frames.sort()
+
+        for event in self.sensor_buffer.events_history.history:
+            start = event.start_at - timedelta(seconds=1)
+            finish = event.end_at - timedelta(seconds=1)
+
+            for frame in frames:
+                ts = datetime.datetime.strptime(frame.split('.png')[0].replace('T', ' ').replace('Z', '').replace('/',':'), '%Y-%m-%d %H:%M:%S.%f')
+
+                if start <= ts <= finish:
+                    event.attached_images.append(frame)
+                    attached_frames.append(frame)
+
+        return attached_frames
 
     def upload_pothole_events(self, ):
         # Upload potholes_event objects
-        # TODO implementare
-        pass
+        events = []
+        [events.append(event.to_dict()) for event in self.sensor_buffer.events_history.history]
+        payload = {"sensor-data": events}
 
-    def upload_frames(self, ):
-        # TODO implementare
-        pass
+        r = requests.post("http://{}:{}/api/upload/bump-data".format(config.config.edge_ip, config.config.edge_port), json=payload)
+        if r.status_code == 200:
+            print("Data upload has been succesfully!")
+        return
+
+    def upload_frames(self, attached_frames ):
+        files = []
+        [files.append(open("{}/{}".format(config.config.frames_path, file), 'rb')) for file in attached_frames]
+        requests.post("http://{}:{}/api/upload/images".format(config.config.edge_ip, config.config.edge_port), files=files)
+        print("frames sent successfully!")
+
+        for filename in os.listdir(config.config.frames_path):
+            file_path = os.path.join(config.config.frames_path, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+        return
+

@@ -1,3 +1,4 @@
+from utils import serve_websocket_data
 from .interface import BaseSimulation, setInterval
 import numpy as np
 import pandas as pd

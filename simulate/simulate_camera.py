@@ -20,12 +20,12 @@ class FrameWrapper():
 
 
 class SimulateCamera(BaseSimulation):
-    def __init__(self, data_path, info_path, freq=0.2, speed=1, verbose=1, ):
+    def __init__(self, video_path, info_path, freq=0.2, speed=1, verbose=1, ):
         super().__init__(freq=freq, speed=speed, verbose=verbose)
-        self.data_path = data_path
+        self.video_path = video_path
         self.info_path = info_path
         self.df_info = pd.read_csv(self.info_path, names=[
-                               'frame_index', 'timestamp'])
+                                'timestamp', 'frame_index'])
 
     def next_timestamp(self, index):
         if len(self.df_info['frame_index']) <= index:
@@ -33,7 +33,7 @@ class SimulateCamera(BaseSimulation):
         return self.df_info['timestamp'][index]
 
     def read_video(self, callback):
-        cap = cv2.VideoCapture(self.data_path)
+        cap = cv2.VideoCapture(self.video_path)
         if self.verbose:
             print("acquiring resource...")
             print(cap.isOpened())
@@ -45,13 +45,10 @@ class SimulateCamera(BaseSimulation):
             if self.verbose:
                 print("frame red...")
             if ret == True:
-                gray = cv2.cvtColor(frame, 0)
-
                 frame_wrapped = FrameWrapper(frame, timestamp)
                 callback(frame_wrapped)
 
-                # cv2.imshow('frame', gray)
-
+                #mock
                 time.sleep(self._freq)
             else:
                 if self.verbose:

@@ -51,5 +51,5 @@ class FrameBuffer():
         for f in self.buffer:
             frame = f.frame
             cv2.imwrite("{}{}.png".format(
-                path, "{}".format(time.time())), frame)
+                path, "{}".format(f.timestamp)), frame)
         self.__flush()
