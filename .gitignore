@@ -129,3 +129,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+#pycharm
+.idea/
+mock_data/
+.DS_STORE
+.gitignore 
