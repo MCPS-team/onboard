@@ -60,10 +60,10 @@ class MainProcess():
         load_dotenv()
         SSID = os.getenv('SSID')
         PSW = os.getenv('SSID_PSW')
-        #os.system(f'nmcli device wifi con "{SSID}" password "{PSW}"')
+        os.system(f'nmcli device wifi con "{SSID}" password "{PSW}"')
 
         #TODO mokkare tentativo di connessione in modo da capire se si connette o meno e spostare tutto questo sotto in un blocco if
-
+        print("connecting to edge server...")
         self.checking_edge_connection.cancel()
         self.on_edge_connection()
 
@@ -104,16 +104,18 @@ class MainProcess():
         # Upload potholes_event objects
         events = []
         [events.append(event.to_dict()) for event in self.sensor_buffer.events_history.history]
-        payload = {"sensor-data": events}
-
+        payload = {"data": events}
+        
+        print("sending sensor data...")
         r = requests.post("http://{}:{}/api/upload/bump-data".format(config.config.edge_ip, config.config.edge_port), json=payload)
+        print(payload)
         if r.status_code == 200:
             print("Data upload has been succesfully!")
         return
 
     def upload_frames(self, attached_frames ):
         files = []
-        [files.append(open("{}/{}".format(config.config.frames_path, file), 'rb')) for file in attached_frames]
+        [files.append((file,open("{}/{}".format(config.config.frames_path, file), 'rb'))) for file in attached_frames]
         requests.post("http://{}:{}/api/upload/images".format(config.config.edge_ip, config.config.edge_port), files=files)
         print("frames sent successfully!")
 
