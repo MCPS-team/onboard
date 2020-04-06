@@ -8,7 +8,7 @@ def group_point_per_sec(timestamps):
     curr_second = 0
     curr_count = 0
     for timestamp in timestamps:
-        d = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f%z")
+        d = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
         if d.second != curr_second:
             groups.append(curr_count)
             curr_second = d.second

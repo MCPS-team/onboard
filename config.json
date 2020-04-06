@@ -1,24 +1,24 @@
 {
     "data_normalization_mean": [
-        7.804775865180694,
-        -1.128971686992716,
-        4.1011338038592555
+        7.848542455471997,
+        -0.394729392322143,
+        4.467791662678275
     ],
     "data_normalization_std": [
-        19.00083387166,
-        5.526247999263,
-        10.633560623857
+        14.943722559845,
+        3.73795703239,
+        15.721750371109
     ],
-    "window_size": 200,
-    "detect_delay": 20,
+    "window_size": 100,
+    "detect_delay": 10,
     "depot_location": [
         45.5130616,
         10.775293
     ],
     "depot_radius": 0.0005,
-    "sensors_freqHz": 24,
-    "camera_fps": 8,
-    "camera_buffer_size": 80,
+    "sensors_freqHz": 10,
+    "camera_fps": 10,
+    "camera_buffer_size": 20,
     "retry_connection_delay": 1,
     "frames_path": "./frames/",
     "edge_ip": "10.42.0.1",

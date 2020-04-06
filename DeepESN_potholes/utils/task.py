@@ -96,7 +96,8 @@ def load_MG(path, metric_function):
 
 def load_PH(path, metric_function):
 
-    df = pd.read_csv(path,  names=['timestamp', 'x', 'y', 'z', 'target'])
+    df = pd.read_csv(path,  names=['timestamp', 'x', 'y', 'z', 'lat', 'lng', 'target'])
+    df = df.drop(columns=['lat', 'lng'])
     df['target'] = [1.0 if x else -1.0 for x in df['target']]
     print(df)
 
@@ -119,8 +120,8 @@ def load_PH(path, metric_function):
         dataset.inputs.shape, dataset.targets.shape))
     # many traces, with 3 inputs and a variable length
     # indexes for training, validation and test set in Earthquake task
-    X_train, X_test = split_dataset(dataset.inputs, 0.8)
-    Y_train, Y_test = split_dataset(dataset.targets, 0.8)
+    X_train, X_test = split_dataset(dataset.inputs, 1)
+    Y_train, Y_test = split_dataset(dataset.targets, 1)
 
     print("#-> CONSIDERED SLICE SIZE: {}".format(len(X_train) + len(Y_train)))
     print("-" * 50)

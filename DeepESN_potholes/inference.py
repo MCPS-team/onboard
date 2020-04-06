@@ -5,9 +5,9 @@ from .DeepESN import DeepESN_skl
 from .utils import best_config_PH
 from .utils import F1_score, best_config_PH, load_PH, plot_timeseries_clf, split_timeseries
 
-PRETAINED_MODEL_PATH = './DeepESN_potholes/pretraineds/model_0_mar_6.h5f'
-MIN_SAMPLES = 10
-MAX_GAP = 5
+PRETAINED_MODEL_PATH = './DeepESN_potholes/pretraineds/model_1_apr_4.h5f'
+MIN_SAMPLES = 3
+MAX_GAP = 3
 NU = 3
 
 _configs = best_config_PH([], NU)
@@ -20,11 +20,10 @@ def ascii_plot_potholes(y_pred):
         print(''.join(["-" if a == -1 else '#' for a in y.squeeze()]))
 
 
-def cluster_ts(X, min_samples=10, max_gap=5, nested=True):
+def cluster_ts(X, min_samples=3, max_gap=3, nested=True):
     X = X.squeeze()
     out = np.zeros((len(X),)) - 1
     last_pos_index = 0
-    consecutive_pos = 0
     group_indexs = []
     for i in range(len(X)):
         if X[i] == 1:
@@ -55,7 +54,7 @@ def inference(unnorm_X, config, verbose=0):
                    config.data_normalization_mean[i]) / (10 * config.data_normalization_std[i])
     y_pred = deep_esn.predict([X], verbose=0)
 
-    threshold = 0
+    threshold = -0.55
     y_pred[y_pred > threshold] = 1
     y_pred[y_pred <= threshold] = -1
 

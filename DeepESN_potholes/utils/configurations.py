@@ -185,7 +185,7 @@ def config_PH(IP_indexes, Nu):
     configs.readout.trainMethod = 'NormalEquations'  # train with singular value decomposition (more accurate)
     configs.readout.regularizations = 10.0**np.array(range(-16, -16, 1))
 
-    configs.rebalance_states = True  # rebalance network states
+    configs.rebalance_states = False  # rebalance network states
 
     return configs
     
@@ -193,9 +193,9 @@ def config_PH(IP_indexes, Nu):
 def best_config_PH(IP_indexes, Nu):
     configs = Struct()
 
-    configs.rhos = 0.5  # set spectral radius 0.9 for all recurrent layers
-    configs.lis = 0.1  # set li 1.0 for all recurrent layers
-    configs.iss = 0.5  # set input scale 0.1 for all recurrent layers
+    configs.rhos = 0.7  # set spectral radius 0.9 for all recurrent layers
+    configs.lis = 1.0  # set li 1.0 for all recurrent layers
+    configs.iss = 0.8  # set input scale 0.1 for all recurrent layers
 
     # Be careful with memory usage
     configs.Nu = Nu

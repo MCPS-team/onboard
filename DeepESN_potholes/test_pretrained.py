@@ -2,14 +2,13 @@ import os
 import numpy as np
 from DeepESN import DeepESN_skl
 from utils import F1_score, best_config_PH, load_PH, plot_timeseries_clf, split_timeseries
-from sklearn.cluster import DBSCAN
 import time
 # fix a seed for the reproducibility of results
 np.random.seed(7)
 
-PRETAINED_MODEL_PATH = './pretraineds/model_0_mar_6.h5f'
-STEP = 20
-CHUNK_LEN = 200
+PRETAINED_MODEL_PATH = './pretraineds/model_1_apr_4.h5f'
+STEP = 10
+CHUNK_LEN = 100
 
 
 def plot_potholes(y_pred):
@@ -21,7 +20,7 @@ def main():
 
     # dataset path
     path = "datasets"
-    path = os.path.join(path, 'accelerometer_2020-03-06T111304369Z.csv')
+    path = os.path.join(path, 'accelerometer_2020-04-03T160405505Z.csv')
 
     print("Loading data from {}".format(path))
 
@@ -46,7 +45,7 @@ def main():
     # load configuration for Earthquake task
     _configs = best_config_PH(list(range(X.shape[0])), Nu)
 
-    result = [np.zeros((1, CHUNK_LEN-STEP))]
+    result = []
 
     deep_esn = DeepESN_skl(configs=_configs.to_dict(),
                            error_function=error_function)
@@ -56,10 +55,13 @@ def main():
     states = None
     for _X in X:
         y_pred = deep_esn.predict([_X], verbose=0)
-        threshold = 0
+        threshold = -0.555764
         y_pred[y_pred > threshold] = 1
         y_pred[y_pred <= threshold] = -1
-        result.append(y_pred[:, -STEP:])
+        if len(result)==0:
+            result.append(y_pred[:,:])
+        else:
+            result.append(y_pred[:, -STEP:])
 
     print("Time elapsed : {} sec.".format(time.time()-start))
 
@@ -72,7 +74,7 @@ def main():
     plt.show()
 
     print("After clustering")
-    result = np.array([cluster_ts(r) for r in result])
+    result = np.array([cluster_ts(r, 3, 3) for r in result])
     plot_potholes(result)
     plt = plot_timeseries_clf(
         unorm_X_train, result, transient=0)

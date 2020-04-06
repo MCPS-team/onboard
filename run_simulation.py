@@ -11,18 +11,20 @@ ANALYZED_FROM_SENSORS_PORT = 8761
 INPUT_SENSORS_PORT = 8771
 
 # For local testing
-def on_end():
-    real_data = np.array([sensor_simulation.get_data_until(100000)])[:, 1:, :]
-    fake_class = np.zeros((1, real_data.shape[-1]))
-    print("REAL DATA SHAPE", real_data.shape)
-    X = np.array([main_process.sensor_buffer.timeseries_history])
-    y_pred = np.array([main_process.sensor_buffer.timeseries_detected_history])
-    print("DETECT DATA SHAPE", X.shape)
-    inference_all_data(X, main_process.config)
-    plt = plot_timeseries_clf(real_data, fake_class, transient=0)
-    plt.show()
-    plt = plot_timeseries_clf(X, y_pred, transient=0)
-    plt.show()
+# def on_end():
+#     real_data = np.array([sensor_simulation.get_data_until(100000)])[
+#         :, 1:4, :]
+#     fake_class = np.zeros((1, real_data.shape[-1]))
+#     print("REAL DATA SHAPE", real_data.shape)
+#     X = np.array([main_process.sensor_buffer.timeseries_history])
+#     y_pred = np.array(
+#         [main_process.sensor_buffer.timeseries_detected_history])
+#     print("DETECT DATA SHAPE", X.shape)
+#     # inference_all_data(X, main_process.config)
+#     plt = plot_timeseries_clf(real_data, fake_class, transient=0)
+#     plt.show()
+#     plt = plot_timeseries_clf(X, y_pred, transient=0)
+#     plt.show()
 
 
 '''
