@@ -22,6 +22,9 @@ class SensorsBuffer():
         ''' append accelarator data to the buffer.'''
         self.buffer.append(data)
 
+    def is_ready(self):
+        return (len(self.buffer) >= self.window_size and (len(self.buffer) % self.detect_delay == 0))
+
     def analyze(self, force: bool = False) -> List[PotholeEvent]:
         '''  Analyze data in last chunk "window_size" of buffer.
         Return a list of 'PotholeEvent' (empty list if no one pothole was detected, or buffer not ready).

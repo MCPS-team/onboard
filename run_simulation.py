@@ -6,6 +6,7 @@ import threading
 import argparse
 from DeepESN_potholes import inference_all_data
 from config import config
+from threading import Timer
 
 ANALYZED_FROM_SENSORS_PORT = 8761
 INPUT_SENSORS_PORT = 8771
@@ -52,6 +53,8 @@ if __name__ == '__main__':
                         help="verbose mode, otherwise silent")
     parser.add_argument('--monitor', action='store_true',
                         help="serve incoming and analyzed data through webscoket. Use it for presentation.")
+    parser.add_argument('--save_file', action='store_true',
+                        help="Save generated potholes objects to json file.")
 
     args = parser.parse_args()
 
@@ -72,3 +75,15 @@ if __name__ == '__main__':
             freq=args.freq*2, port=ANALYZED_FROM_SENSORS_PORT)
         sensor_simulation.serve_websocket_data(
             freq=args.freq*2, port=INPUT_SENSORS_PORT)
+
+    if args.save_file:
+        import json
+        # TODO: make better implementation
+        def save_to_file(main_process, path):
+            main_process.attach_frames()
+            events = [event.to_dict() for event in main_process.sensor_buffer.events_history.history]
+            with open(path, 'w') as f:
+                json.dump(events, f)
+            print("Saved {} event to file {}".format(len(events), path))
+        r = Timer(3.0, save_to_file, (main_process, './log_pothole_events.json'))
+        sensor_simulation.on_end(r.start)

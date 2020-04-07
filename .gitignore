@@ -1,4 +1,5 @@
 frames/*
+log_pothole_events.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -16,7 +16,7 @@
         10.775293
     ],
     "depot_radius": 0.0005,
-    "sensors_freqHz": 10,
+    "sensors_freqHz": 9.55,
     "camera_fps": 10,
     "camera_buffer_size": 20,
     "retry_connection_delay": 1,

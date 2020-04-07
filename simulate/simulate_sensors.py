@@ -18,7 +18,7 @@ class SimulateSensors(BaseSimulation):
         self.df['timestamp'] = self.df['timestamp'].apply(
             lambda iso_date: datetime.strptime(iso_date, "%Y-%m-%dT%H:%M:%S.%fZ"))
         self.df_index = 0
-
+        self.fn_on_end = []
         if self.verbose:
             print("Data file length {}".format(len(self.df['timestamp'])))
 
@@ -54,7 +54,7 @@ class SimulateSensors(BaseSimulation):
             if data is None:
                 self.interval.cancel()
                 if self.fn_on_end is not None:
-                    self.fn_on_end()
+                    [fn() for fn in self.fn_on_end]
                 return False
 
             callback(data[0], data[1], data[2],
@@ -71,7 +71,7 @@ class SimulateSensors(BaseSimulation):
             'Started simulated accelerometer input  -> time : {:.1f}s'.format(time.time()))
 
     def on_end(self, callback):
-        self.fn_on_end = callback
+        self.fn_on_end.append(callback)
 
     def serve_websocket_data(self, freq=0.2, port=8771, window_size=1000):
         ''' start websocket server to send data to the monitor dashboard '''

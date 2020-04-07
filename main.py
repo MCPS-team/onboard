@@ -9,7 +9,9 @@ from utils import euclidean_dist, setInterval
 import time
 from dotenv import load_dotenv
 
-
+# TODO: aggiungere thread per analisi rete neurale e salvataggio immagini
+# TODO: salvare immagini in jpg
+# TODO: implementare speed in simulazione fotocamera
 
 class MainProcess():
     ''' Classe principale che racchide tutto il processo di analisi e raccolta dati '''
@@ -28,14 +30,16 @@ class MainProcess():
         self.last_timestap = timestamp
         acc_data = SensorsData(timestamp, x, y, z, lat, lng)
         self.sensor_buffer.append(acc_data)
-        events = self.sensor_buffer.analyze()
-        if events is not None:
-            # Qui chiami la funzione che prende in input gli eventi e seleziona i fotogrammi.
-            # e aggiungi i fotogrammi corrispondenti all'oggetto PotholeEvent
-            for event in events:
+        # Controlla se il buffer è pronto per essere analizzato
+        if self.sensor_buffer.is_ready():
+            events = self.sensor_buffer.analyze()
+            if events is not None and len(events)>0:
+                # Qui chiami la funzione che prende in input gli eventi e seleziona i fotogrammi.
+                # e aggiungi i fotogrammi corrispondenti all'oggetto PotholeEvent
                 self.frame_buffer.pothole_detected()
-                print("Pothole event {}: start_at={} - end_at={}".format(event.uid,
-                                                                         event.start_at, event.end_at))
+                for event in events:
+                    print("Pothole event {}: start_at={} - end_at={}".format(event.uid,
+                                                                            event.start_at, event.end_at))
         # In base a latitudine e longitudine, controlla
         # se siamo nelle vicinanze del deposito
         self.is_near_depot([lat, lng])
@@ -110,13 +114,13 @@ class MainProcess():
         r = requests.post("http://{}:{}/api/upload/bump-data".format(config.config.edge_ip, config.config.edge_port), json=payload)
         print(payload)
         if r.status_code == 200:
-            print("Data upload has been succesfully!")
+            print("Data upload successfully!")
         return
 
     def upload_frames(self, attached_frames ):
         files = []
         [files.append((file,open("{}/{}".format(config.config.frames_path, file), 'rb'))) for file in attached_frames]
-        requests.post("http://{}:{}/api/upload/images".format(config.config.edge_ip, config.config.edge_port), files=files)
+        requests.post("http://{}:{}/api/upload/images".format(config.config.edge_ip, config.config.edge_port), files=files) 
         print("frames sent successfully!")
 
         for filename in os.listdir(config.config.frames_path):
