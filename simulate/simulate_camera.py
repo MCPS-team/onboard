@@ -43,7 +43,7 @@ class SimulateCamera(BaseSimulation):
             timestamp = self.next_timestamp(frame_index)
             frame_index += 1
             if self.verbose:
-                print("frame red...")
+                print(f"frame {timestamp} red...")
             if ret == True:
                 frame_wrapped = FrameWrapper(frame, timestamp)
                 callback(frame_wrapped)

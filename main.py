@@ -4,7 +4,7 @@ import shutil
 from datetime import timedelta
 import requests
 import config
-from buffers import SensorsData, PotholeEvent, SensorsBuffer, FrameBuffer
+from buffers import SensorsData, SensorsBuffer, FrameBuffer, Swapper
 from utils import euclidean_dist, setInterval
 import time
 from dotenv import load_dotenv
@@ -21,7 +21,7 @@ class MainProcess():
         self.config = config
         self.sensor_buffer = SensorsBuffer(
             config=config, window_size=config.window_size, detect_delay=config.detect_delay, verbose=1)
-        self.frame_buffer = FrameBuffer(config.camera_buffer_size, config.frames_path)
+        self.frame_buffer = FrameBuffer(config.camera_buffer_size)
         self.last_timestap = time.time()
         self.checking_edge_connection = None
         # self.camera_buffer =
@@ -30,16 +30,16 @@ class MainProcess():
         self.last_timestap = timestamp
         acc_data = SensorsData(timestamp, x, y, z, lat, lng)
         self.sensor_buffer.append(acc_data)
-        # Controlla se il buffer è pronto per essere analizzato
-        if self.sensor_buffer.is_ready():
-            events = self.sensor_buffer.analyze()
-            if events is not None and len(events)>0:
-                # Qui chiami la funzione che prende in input gli eventi e seleziona i fotogrammi.
-                # e aggiungi i fotogrammi corrispondenti all'oggetto PotholeEvent
-                self.frame_buffer.pothole_detected()
-                for event in events:
-                    print("Pothole event {}: start_at={} - end_at={}".format(event.uid,
-                                                                            event.start_at, event.end_at))
+        events = self.sensor_buffer.analyze()
+        if events is not None:
+            # Qui chiami la funzione che prende in input gli eventi e seleziona i fotogrammi.
+            # e aggiungi i fotogrammi corrispondenti all'oggetto PotholeEvent
+            for event in events:
+                #self.frame_buffer.pothole_detected()
+                swapper = Swapper(self.frame_buffer, config.config.frames_path)
+                swapper.run()
+                print("Pothole event {}: start_at={} - end_at={}".format(event.uid,
+                                                                         event.start_at, event.end_at))
         # In base a latitudine e longitudine, controlla
         # se siamo nelle vicinanze del deposito
         self.is_near_depot([lat, lng])

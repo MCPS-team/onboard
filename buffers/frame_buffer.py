@@ -8,11 +8,10 @@ import os
 class FrameBuffer():
     """docstring for FrameBuffer"""
 
-    def __init__(self, size, path=""):
+    def __init__(self, size):
         super().__init__()
         self.buffer = []
         self.size = size
-        self.path = path
         self.condition = threading.Condition()
 
     def __push(self, frame):
@@ -30,6 +29,7 @@ class FrameBuffer():
             self.__push(frame)
             self.condition.release()
             self.condition.notifyAll()
+            print(len(self.buffer))
 
     def __flush(self):
         self.buffer.clear()
@@ -40,16 +40,8 @@ class FrameBuffer():
                 self.condition.wait()
             print("swapping buffer ...")
             tmp_buffer = self.buffer
-            self.tmp_buffer = []
+            self.buffer = []
             self.condition.release()
             self.condition.notifyAll()
 
-        path = ("{}/".format(self.path))
-
-        if not os.path.exists(path):
-            os.makedirs(path)
-        for f in self.buffer:
-            frame = f.frame
-            cv2.imwrite("{}{}.png".format(
-                path, "{}".format(f.timestamp)), frame)
-        self.__flush()
+        return tmp_buffer
