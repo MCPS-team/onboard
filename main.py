@@ -35,7 +35,6 @@ class MainProcess():
             # Qui chiami la funzione che prende in input gli eventi e seleziona i fotogrammi.
             # e aggiungi i fotogrammi corrispondenti all'oggetto PotholeEvent
             for event in events:
-                #self.frame_buffer.pothole_detected()
                 swapper = Swapper(self.frame_buffer, config.config.frames_path)
                 swapper.run()
                 print("Pothole event {}: start_at={} - end_at={}".format(event.uid,

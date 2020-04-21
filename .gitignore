@@ -137,3 +137,5 @@ dmypy.json
 mock_data/
 .DS_STORE
 .gitignore 
+
+frames1/

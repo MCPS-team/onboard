@@ -12,12 +12,12 @@
     "window_size": 100,
     "detect_delay": 10,
     "depot_location": [
-        45.5130616,
-        10.775293
+        45.5125669,
+        10.7766294
     ],
-    "depot_radius": 0.0005,
-    "sensors_freqHz": 9.55,
-    "camera_fps": 10,
+    "depot_radius": 0.00000005,
+    "sensors_freqHz": 9.85,
+    "camera_fps": 10.65,
     "camera_buffer_size": 20,
     "retry_connection_delay": 1,
     "frames_path": "./frames/",
