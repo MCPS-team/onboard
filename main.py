@@ -86,7 +86,7 @@ class MainProcess():
         attached_frames = []
 
         #clean folder from hidden files
-        [frames.remove(x) for x in frames if x.find(".png") == -1]
+        [frames.remove(x) for x in frames if x.find(".jpg") == -1]
 
         frames.sort()
 
@@ -95,7 +95,7 @@ class MainProcess():
             finish = event.end_at - timedelta(seconds=1)
 
             for frame in frames:
-                ts = datetime.datetime.strptime(frame.split('.png')[0].replace('T', ' ').replace('Z', '').replace('/',':'), '%Y-%m-%d %H:%M:%S.%f')
+                ts = datetime.datetime.strptime(frame.split('.jpg')[0].replace('T', ' ').replace('Z', '').replace('/',':'), '%Y-%m-%d %H:%M:%S.%f')
 
                 if start <= ts <= finish:
                     event.attached_images.append(frame)

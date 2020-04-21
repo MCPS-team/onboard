@@ -22,7 +22,7 @@ class Swapper():
         i = 0
         for f in old_buffer:
             frame = f.frame
-            cv2.imwrite("{}{}.png".format(
+            cv2.imwrite("{}{}.jpg".format(
                 path, "{}".format(f.timestamp)), frame)
             print(f"Saved frame {f.timestamp} in filesystem!: {i} of {len(old_buffer)} ")
             i += 1
