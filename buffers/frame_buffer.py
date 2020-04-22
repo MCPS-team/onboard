@@ -29,7 +29,6 @@ class FrameBuffer():
             self.__push(frame)
             self.condition.release()
             self.condition.notifyAll()
-            print(len(self.buffer))
 
     def __flush(self):
         self.buffer.clear()

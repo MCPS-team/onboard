@@ -64,7 +64,15 @@ if __name__ == '__main__':
         args.data_path, freq=1/config.sensors_freqHz, speed=args.speed, verbose=args.verbose)
     camera_simulation = SimulateCamera(
         args.video_path, args.info_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose)
-    # sensor_simulation.on_end(on_end)
+    def on_end():
+        X = np.array([main_process.sensor_buffer.timeseries_history])
+        y_pred = np.array(
+            [main_process.sensor_buffer.timeseries_detected_history])
+        print("IN DATA SHAPE", X.shape)
+        print("OUT DATA SHAPE", y_pred.shape)
+        plt = plot_timeseries_clf(X, y_pred, transient=0)
+        plt.show()
+    sensor_simulation.on_end(on_end)
 
     # camera_simulation =
     sensor_simulation.run(main_process.on_update_sensors)

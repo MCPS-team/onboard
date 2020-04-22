@@ -38,6 +38,7 @@ class SimulateSensors(BaseSimulation):
 
         x = [self.df['timestamp'][self.df_index], self.df['x'][self.df_index],
              self.df['y'][self.df_index], self.df['z'][self.df_index], self.df['lat'][self.df_index],self.df['lng'][self.df_index]]
+        # print("sensor {} read...".format(self.df['timestamp'][self.df_index]))
         self.df_index += 1
         return x
 
@@ -47,7 +48,7 @@ class SimulateSensors(BaseSimulation):
             callback: function(timestamp, x, y, z, lat, lng)
         '''
         def next_step():
-            if self.verbose:
+            if self.verbose>=2:
                 start_time = time.time()
             data = self.next_data()
             # if no more data, interrupt simulation and return
@@ -60,7 +61,7 @@ class SimulateSensors(BaseSimulation):
             callback(data[0], data[1], data[2],
                      data[3], data[4], data[5])  # TODO add 'lat' 'lng'
 
-            if self.verbose:
+            if self.verbose>=2:
                 diff = time.time()-start_time
                 print("Running time for step {} : {} ms, required_time: {} ms, success: {}".format(
                     data[0], diff, self._freq, diff <= self._freq))

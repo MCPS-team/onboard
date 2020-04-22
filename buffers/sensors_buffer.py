@@ -49,14 +49,14 @@ class SensorsBuffer():
     def _detect(self, data) -> List[PotholeEvent]:
         out_timeseries = inference(data, self.config, verbose=self.verbose)[0]
         events = self.events_history.timeseries_to_events(
-            self.buffer[-self.window_size:], out_timeseries)
+            self.buffer[-self.detect_delay:], out_timeseries)
 
         if self.verbose:
             if len(self.timeseries_history) > 0:
                 self.timeseries_history = np.concatenate(
                     (self.timeseries_history, data[:, -self.detect_delay:]), axis=1)
                 self.timeseries_detected_history = np.concatenate(
-                    (self.timeseries_detected_history[:-(self.window_size-self.detect_delay)], out_timeseries), axis=0)
+                    (self.timeseries_detected_history, out_timeseries[-self.detect_delay:]), axis=0)
                 # self.timeseries_detected_history[-self.window_size:] = out_timeseries
             else:
                 self.timeseries_history = data

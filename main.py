@@ -3,7 +3,6 @@ import os
 import shutil
 from datetime import timedelta
 import requests
-import config
 from buffers import SensorsData, SensorsBuffer, FrameBuffer, Swapper
 from utils import euclidean_dist, setInterval
 import time
@@ -12,6 +11,7 @@ from dotenv import load_dotenv
 # TODO: aggiungere thread per analisi rete neurale e salvataggio immagini
 # TODO: salvare immagini in jpg
 # TODO: implementare speed in simulazione fotocamera
+
 
 class MainProcess():
     ''' Classe principale che racchide tutto il processo di analisi e raccolta dati '''
@@ -35,7 +35,7 @@ class MainProcess():
             # Qui chiami la funzione che prende in input gli eventi e seleziona i fotogrammi.
             # e aggiungi i fotogrammi corrispondenti all'oggetto PotholeEvent
             for event in events:
-                swapper = Swapper(self.frame_buffer, config.config.frames_path)
+                swapper = Swapper(self.frame_buffer, self.config.frames_path)
                 swapper.run()
                 print("Pothole event {}: start_at={} - end_at={}".format(event.uid,
                                                                          event.start_at, event.end_at))
@@ -55,7 +55,8 @@ class MainProcess():
         dist = euclidean_dist(lat_lng, self.config.depot_location)
         # 0.00001 degrees is about a meter
         if dist <= self.config.depot_radius and not self.checking_edge_connection:
-            self.checking_edge_connection = setInterval(self.config.retry_connection_delay, self.try_wireless_connection)
+            self.checking_edge_connection = setInterval(
+                self.config.retry_connection_delay, self.try_wireless_connection)
         elif dist > self.config.depot_radius and self.checking_edge_connection:
             self.checking_edge_connection.cancel()
 
@@ -65,7 +66,7 @@ class MainProcess():
         PSW = os.getenv('SSID_PSW')
         os.system(f'nmcli device wifi con "{SSID}" password "{PSW}"')
 
-        #TODO mokkare tentativo di connessione in modo da capire se si connette o meno e spostare tutto questo sotto in un blocco if
+        # TODO mokkare tentativo di connessione in modo da capire se si connette o meno e spostare tutto questo sotto in un blocco if
         print("connecting to edge server...")
         self.checking_edge_connection.cancel()
         self.on_edge_connection()
@@ -82,20 +83,23 @@ class MainProcess():
         self.upload_frames(attached_frames)
 
     def attach_frames(self):
-        frames = list(os.walk(config.config.frames_path))[0][2]
+        frames = list(os.walk(self.config.frames_path))[0][2]
         attached_frames = []
 
-        #clean folder from hidden files
+        # clean folder from hidden files
         [frames.remove(x) for x in frames if x.find(".jpg") == -1]
 
         frames.sort()
 
         for event in self.sensor_buffer.events_history.history:
-            start = event.start_at - timedelta(seconds=1)
-            finish = event.end_at - timedelta(seconds=1)
+            # start = event.start_at - timedelta(seconds=1)
+            # finish = event.end_at - timedelta(seconds=1)
+            start = event.start_at - timedelta(seconds=0.5)
+            finish = event.start_at
 
             for frame in frames:
-                ts = datetime.datetime.strptime(frame.split('.jpg')[0].replace('T', ' ').replace('Z', '').replace('/',':'), '%Y-%m-%d %H:%M:%S.%f')
+                ts = datetime.datetime.strptime(
+                    frame.split('.jpg')[0], '%Y-%m-%dT%H:%M:%S.%fZ')
 
                 if start <= ts <= finish:
                     event.attached_images.append(frame)
@@ -106,24 +110,28 @@ class MainProcess():
     def upload_pothole_events(self, ):
         # Upload potholes_event objects
         events = []
-        [events.append(event.to_dict()) for event in self.sensor_buffer.events_history.history]
+        [events.append(event.to_dict())
+         for event in self.sensor_buffer.events_history.history]
         payload = {"data": events}
-        
+
         print("sending sensor data...")
-        r = requests.post("http://{}:{}/api/upload/bump-data".format(config.config.edge_ip, config.config.edge_port), json=payload)
+        r = requests.post("http://{}:{}/api/upload/bump-data".format(
+            self.config.edge_ip, self.config.edge_port), json=payload)
         print(payload)
         if r.status_code == 200:
             print("Data upload successfully!")
         return
 
-    def upload_frames(self, attached_frames ):
+    def upload_frames(self, attached_frames):
         files = []
-        [files.append((file,open("{}/{}".format(config.config.frames_path, file), 'rb'))) for file in attached_frames]
-        requests.post("http://{}:{}/api/upload/images".format(config.config.edge_ip, config.config.edge_port), files=files) 
+        [files.append((file, open("{}/{}".format(self.config.frames_path, file), 'rb')))
+         for file in attached_frames]
+        requests.post("http://{}:{}/api/upload/images".format(
+            self.config.edge_ip, self.config.edge_port), files=files)
         print("frames sent successfully!")
 
-        for filename in os.listdir(config.config.frames_path):
-            file_path = os.path.join(config.config.frames_path, filename)
+        for filename in os.listdir(self.config.frames_path):
+            file_path = os.path.join(self.config.frames_path, filename)
             try:
                 if os.path.isfile(file_path) or os.path.islink(file_path):
                     os.unlink(file_path)
@@ -132,4 +140,3 @@ class MainProcess():
             except Exception as e:
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
         return
-

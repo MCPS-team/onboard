@@ -20,7 +20,7 @@ def ascii_plot_potholes(y_pred):
         print(''.join(["-" if a == -1 else '#' for a in y.squeeze()]))
 
 
-def cluster_ts(X, min_samples=3, max_gap=3, nested=True):
+def cluster_ts(X, min_samples=3, max_gap=3, nested=False):
     X = X.squeeze()
     out = np.zeros((len(X),)) - 1
     last_pos_index = 0
@@ -40,7 +40,7 @@ def cluster_ts(X, min_samples=3, max_gap=3, nested=True):
         for z in range(group_indexs[0], group_indexs[-1]):
             out[z] = 1
     if nested:
-        out = cluster_ts(out, min_samples*2, max_gap*2, nested=False)
+        out = cluster_ts(out, min_samples, max_gap*2, nested=False)
     return out
 
 
@@ -58,6 +58,7 @@ def inference(unnorm_X, config, verbose=0):
     y_pred[y_pred > threshold] = 1
     y_pred[y_pred <= threshold] = -1
 
+    # out = y_pred
     out = np.array([cluster_ts(y, min_samples=MIN_SAMPLES, max_gap=MAX_GAP)
            for y in y_pred])
 

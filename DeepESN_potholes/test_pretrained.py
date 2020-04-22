@@ -8,7 +8,7 @@ np.random.seed(7)
 
 PRETAINED_MODEL_PATH = './pretraineds/model_1_apr_4.h5f'
 STEP = 10
-CHUNK_LEN = 100
+CHUNK_LEN = 50
 
 
 def plot_potholes(y_pred):
@@ -85,7 +85,6 @@ def cluster_ts(X, min_samples=10, max_gap=5):
     X = X.squeeze()
     out = np.zeros((len(X),)) - 1
     last_pos_index = 0
-    consecutive_pos = 0
     group_indexs = []
     for i in range(len(X)):
         if X[i] == 1:
