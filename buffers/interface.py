@@ -99,7 +99,7 @@ class PotholeEventHistory():
                 curr_event["end"] = index - 1
                 new_event = PotholeEvent(
                     buffer_data[curr_event["start"]].timestamp, buffer_data[curr_event["end"]].timestamp)
-                new_event.attached_sensors_data = buffer_data[curr_event["start"]: curr_event["end"]]
+                new_event.attached_sensors_data = buffer_data[curr_event["start"]: (curr_event["end"]+1)]
                 new_event.latitude = buffer_data[curr_event["start"]].lat
                 new_event.longitude = buffer_data[curr_event["start"]].lng
                 events.append(new_event)

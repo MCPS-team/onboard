@@ -13,7 +13,7 @@ class SensorsBuffer():
         self.buffer = []
         self.events_history = PotholeEventHistory()
         self.timeseries_history = []
-        self.timeseries_detected_history = np.zeros((self.window_size,))
+        self.timeseries_detected_history = np.zeros((self.window_size-self.detect_delay,))
         self.verbose = verbose
         # Pre-allocate matrix for performance
         self.__input_matrix = np.zeros((3, self.window_size))
@@ -47,20 +47,18 @@ class SensorsBuffer():
         return events
 
     def _detect(self, data) -> List[PotholeEvent]:
-        out_timeseries = inference(data, self.config, verbose=self.verbose)[0]
+        out_timeseries = inference(data, self.config, verbose=self.verbose)
         events = self.events_history.timeseries_to_events(
             self.buffer[-self.detect_delay:], out_timeseries)
 
         if self.verbose:
+            self.timeseries_detected_history = np.concatenate(
+                    (self.timeseries_detected_history, out_timeseries), axis=0)
             if len(self.timeseries_history) > 0:
                 self.timeseries_history = np.concatenate(
                     (self.timeseries_history, data[:, -self.detect_delay:]), axis=1)
-                self.timeseries_detected_history = np.concatenate(
-                    (self.timeseries_detected_history, out_timeseries[-self.detect_delay:]), axis=0)
-                # self.timeseries_detected_history[-self.window_size:] = out_timeseries
             else:
                 self.timeseries_history = data
-                self.timeseries_detected_history = np.array(out_timeseries)
         return events
 
     def serve_websocket_data(self, freq=0.2, port=8761):

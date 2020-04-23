@@ -24,14 +24,13 @@ class MainProcess():
         self.frame_buffer = FrameBuffer(config.camera_buffer_size)
         self.last_timestap = time.time()
         self.checking_edge_connection = None
-        # self.camera_buffer =
 
     def on_update_sensors(self, timestamp, x, y, z, lat=None, lng=None):
         self.last_timestap = timestamp
         acc_data = SensorsData(timestamp, x, y, z, lat, lng)
         self.sensor_buffer.append(acc_data)
         events = self.sensor_buffer.analyze()
-        if events is not None:
+        if len(events) > 0:
             # Qui chiami la funzione che prende in input gli eventi e seleziona i fotogrammi.
             # e aggiungi i fotogrammi corrispondenti all'oggetto PotholeEvent
             for event in events:
@@ -94,8 +93,8 @@ class MainProcess():
         for event in self.sensor_buffer.events_history.history:
             # start = event.start_at - timedelta(seconds=1)
             # finish = event.end_at - timedelta(seconds=1)
-            start = event.start_at - timedelta(seconds=0.5)
-            finish = event.start_at
+            start = event.start_at - timedelta(seconds=1)
+            finish = event.end_at
 
             for frame in frames:
                 ts = datetime.datetime.strptime(
@@ -109,9 +108,8 @@ class MainProcess():
 
     def upload_pothole_events(self, ):
         # Upload potholes_event objects
-        events = []
-        [events.append(event.to_dict())
-         for event in self.sensor_buffer.events_history.history]
+        events = [event.to_dict()
+                  for event in self.sensor_buffer.events_history.history]
         payload = {"data": events}
 
         print("sending sensor data...")
@@ -123,9 +121,8 @@ class MainProcess():
         return
 
     def upload_frames(self, attached_frames):
-        files = []
-        [files.append((file, open("{}/{}".format(self.config.frames_path, file), 'rb')))
-         for file in attached_frames]
+        files = [(file, open("{}/{}".format(self.config.frames_path, file), 'rb'))
+                 for file in attached_frames]
         requests.post("http://{}:{}/api/upload/images".format(
             self.config.edge_ip, self.config.edge_port), files=files)
         print("frames sent successfully!")

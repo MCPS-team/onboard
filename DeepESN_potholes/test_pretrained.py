@@ -81,25 +81,27 @@ def main():
     plt.show()
 
 
-def cluster_ts(X, min_samples=10, max_gap=5):
+def cluster_ts(X, min_samples=3, max_gap=3, nested=False):
     X = X.squeeze()
     out = np.zeros((len(X),)) - 1
     last_pos_index = 0
-    group_indexs = []
+    group_indexes = []
     for i in range(len(X)):
         if X[i] == 1:
             last_pos_index = i
-            group_indexs.append(i)
+            group_indexes.append(i)
         else:
             # Se finisce l'iterazione
-            if i >= last_pos_index+max_gap:
-                if len(group_indexs) >= min_samples:
-                    for z in range(group_indexs[0], group_indexs[-1]):
+            if i > last_pos_index+max_gap:
+                if len(group_indexes) >= min_samples:
+                    for z in range(group_indexes[0], group_indexes[-1]):
                         out[z] = 1
-                group_indexs = []
-    if len(group_indexs) >= min_samples:
-        for z in range(group_indexs[0], group_indexs[-1]):
+                group_indexes = []
+    if len(group_indexes) >= min_samples:
+        for z in range(group_indexes[0], group_indexes[-1]):
             out[z] = 1
+    if nested:
+        out = cluster_ts(out, min_samples, max_gap*2, nested=False)
     return out
 
 

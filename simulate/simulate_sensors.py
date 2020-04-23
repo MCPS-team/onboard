@@ -59,8 +59,8 @@ class SimulateSensors(BaseSimulation):
                 return False
 
             callback(data[0], data[1], data[2],
-                     data[3], data[4], data[5])  # TODO add 'lat' 'lng'
-
+                     data[3], data[4], data[5])
+                     
             if self.verbose>=2:
                 diff = time.time()-start_time
                 print("Running time for step {} : {} ms, required_time: {} ms, success: {}".format(
