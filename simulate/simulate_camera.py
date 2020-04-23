@@ -1,6 +1,7 @@
 # Qui classe Simulate Camera
 # Vedi classe BaseSimulator per ereditare funzioni
 # Una SetInterval come in sumilate sensors per simulare il flusso asincrono di dati
+import datetime
 
 from .interface import BaseSimulation, setInterval
 import cv2
@@ -57,27 +58,15 @@ class SimulateCamera(BaseSimulation):
 
     def read_video(self, callback):
         cap = cv2.VideoCapture(self.video_path)
-        if self.verbose:
-            print("acquiring resource...")
-            print(cap.isOpened())
         frame_index = 0
-        while(cap.isOpened()):
+        while (cap.isOpened()):
             ret, frame = cap.read()
             timestamp = self.next_timestamp(frame_index)
             frame_index += 1
-            if self.verbose:
-                print(f"frame {timestamp} red...")
             if ret == True:
-                frame_wrapped = FrameWrapper(frame, timestamp)
-                callback(frame_wrapped)
-
-                #mock
-                time.sleep(self._freq)
+                self.frames.append(FrameWrapper(frame, timestamp))
             else:
-                if self.verbose:
-                    print("no frame read")
                 break
-
         # Release everything if job is finished
         cap.release()
         cv2.destroyAllWindows()
@@ -90,6 +79,24 @@ class SimulateCamera(BaseSimulation):
             time.sleep(self._freq)
         if self.verbose:
                     print("no frame read")
+
+    def next_timestamp(self, index):
+        if len(self.df_info['frame_index']) <= index:
+            return None
+        return self.df_info['timestamp'][index]
+
+    def read_video(self, callback):
+        for frame_wrapped in self.frames:
+            if self.verbose:
+                print(f"frame {frame_wrapped.timestamp} red at {time.time()}")
+
+            callback(frame_wrapped)
+
+            #mock
+            time.sleep(self._freq)
+        if self.verbose:
+            print("no frame read")
+
 
     def run(self, callback):
         if self.verbose:
