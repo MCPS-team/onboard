@@ -88,10 +88,9 @@ if __name__ == '__main__':
         import json
         # TODO: make better implementation
         def save_to_file(main_process, path):
-            main_process.attach_frames()
             events = [event.to_dict() for event in main_process.sensor_buffer.events_history.history]
             with open(path, 'w') as f:
                 json.dump(events, f)
             print("Saved {} event to file {}".format(len(events), path))
-        r = Timer(3.0, save_to_file, (main_process, './log_pothole_events.json'))
+        r = Timer(5.0, save_to_file, (main_process, './log_pothole_events.json'))
         sensor_simulation.on_end(r.start)

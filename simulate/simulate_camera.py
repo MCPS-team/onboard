@@ -72,11 +72,13 @@ class SimulateCamera(BaseSimulation):
         cv2.destroyAllWindows()
     
     def read_cache(self, callback):
+        _start = time.time()
         for frame in self.cached_frames:
             if self.verbose:
                 print(f"frame {frame.timestamp} red...")
             callback(frame)
-            time.sleep(self._freq)
+            time.sleep(self._freq-(time.time()-_start))
+            _start = time.time()
         if self.verbose:
                     print("no frame read")
 

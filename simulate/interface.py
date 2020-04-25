@@ -25,6 +25,7 @@ class setInterval:
             nextTime += self.interval
             self.action()
 
+
     def cancel(self):
         self.stopEvent.set()
 
