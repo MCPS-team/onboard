@@ -18,7 +18,7 @@
     "depot_radius": 0.000000005,
     "sensors_freqHz": 9.85,
     "camera_fps": 10.65,
-    "camera_buffer_size": 30,
+    "camera_buffer_size": 25,
     "retry_connection_delay": 1,
     "frames_path": "./frames/",
     "edge_ip": "10.42.0.1",

@@ -59,14 +59,21 @@ class SimulateCamera(BaseSimulation):
     def read_video(self, callback):
         cap = cv2.VideoCapture(self.video_path)
         frame_index = 0
+        _start = time.time()
         while (cap.isOpened()):
             ret, frame = cap.read()
-            timestamp = self.next_timestamp(frame_index)
-            frame_index += 1
             if ret == True:
-                self.frames.append(FrameWrapper(frame, timestamp))
+                timestamp = self.next_timestamp(frame_index)
+                if self.verbose:
+                    print(f"frame {timestamp} red...")
+                callback(FrameWrapper(frame, timestamp))
+                frame_index += 1
+                time.sleep(self._freq-(time.time()-_start))
+                _start = time.time()
             else:
                 break
+        if self.verbose:
+            print("no frame read")
         # Release everything if job is finished
         cap.release()
         cv2.destroyAllWindows()
@@ -86,19 +93,6 @@ class SimulateCamera(BaseSimulation):
         if len(self.df_info['frame_index']) <= index:
             return None
         return self.df_info['timestamp'][index]
-
-    def read_video(self, callback):
-        for frame_wrapped in self.frames:
-            if self.verbose:
-                print(f"frame {frame_wrapped.timestamp} red at {time.time()}")
-
-            callback(frame_wrapped)
-
-            #mock
-            time.sleep(self._freq)
-        if self.verbose:
-            print("no frame read")
-
 
     def run(self, callback):
         if self.verbose:

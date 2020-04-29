@@ -11,23 +11,6 @@ from threading import Timer
 ANALYZED_FROM_SENSORS_PORT = 8761
 INPUT_SENSORS_PORT = 8771
 
-# For local testing
-# def on_end():
-#     real_data = np.array([sensor_simulation.get_data_until(100000)])[
-#         :, 1:4, :]
-#     fake_class = np.zeros((1, real_data.shape[-1]))
-#     print("REAL DATA SHAPE", real_data.shape)
-#     X = np.array([main_process.sensor_buffer.timeseries_history])
-#     y_pred = np.array(
-#         [main_process.sensor_buffer.timeseries_detected_history])
-#     print("DETECT DATA SHAPE", X.shape)
-#     # inference_all_data(X, main_process.config)
-#     plt = plot_timeseries_clf(real_data, fake_class, transient=0)
-#     plt.show()
-#     plt = plot_timeseries_clf(X, y_pred, transient=0)
-#     plt.show()
-
-
 '''
 Esempio di utilizzo:
 Esegui:
@@ -63,16 +46,16 @@ if __name__ == '__main__':
     sensor_simulation = SimulateSensors(
         args.data_path, freq=1/config.sensors_freqHz, speed=args.speed, verbose=args.verbose)
     camera_simulation = SimulateCamera(
-        args.video_path, args.info_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose)
-    def on_end():
-        X = np.array([main_process.sensor_buffer.timeseries_history])
-        y_pred = np.array(
-            [main_process.sensor_buffer.timeseries_detected_history])
-        print("IN DATA SHAPE", X.shape)
-        print("OUT DATA SHAPE", y_pred.shape)
-        plt = plot_timeseries_clf(X, y_pred, transient=0)
-        plt.show()
-    sensor_simulation.on_end(on_end)
+        args.video_path, args.info_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose, preload=True)
+    # def on_end():
+    #     X = np.array([main_process.sensor_buffer.timeseries_history])
+    #     y_pred = np.array(
+    #         [main_process.sensor_buffer.timeseries_detected_history])
+    #     print("IN DATA SHAPE", X.shape)
+    #     print("OUT DATA SHAPE", y_pred.shape)
+    #     plt = plot_timeseries_clf(X, y_pred, transient=0)
+    #     plt.show()
+    # sensor_simulation.on_end(on_end)
 
     # camera_simulation =
     sensor_simulation.run(main_process.on_update_sensors)

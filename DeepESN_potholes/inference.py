@@ -21,7 +21,6 @@ def ascii_plot_potholes(y_pred):
 
 
 def cluster_ts(X, min_samples=3, max_gap=3, nested=False):
-    start = time.time()
     X = X.squeeze()
     out = np.zeros((len(X),)) - 1
     last_pos_index = 0
@@ -42,7 +41,6 @@ def cluster_ts(X, min_samples=3, max_gap=3, nested=False):
             out[z] = 1
     if nested:
         out = cluster_ts(out, min_samples, max_gap*2, nested=False)
-    print("Cluster TS, time elapse", time.time()-start)
     return out
 
 def inference(unnorm_X, config, verbose=0):
