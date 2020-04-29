@@ -1,6 +1,7 @@
 import datetime
 import os
 import shutil
+import uuid
 from datetime import timedelta
 import requests
 from buffers import SensorsData, SensorsBuffer, FrameBuffer, Swapper
@@ -18,6 +19,7 @@ class MainProcess():
 
     def __init__(self, config):
         super().__init__()
+        self.uid =  uuid.uuid4()
         self.config = config
         self.sensor_buffer = SensorsBuffer(
             config=config, window_size=config.window_size, detect_delay=config.detect_delay, verbose=1)
@@ -110,7 +112,7 @@ class MainProcess():
         # Upload potholes_event objects
         events = [event.to_dict()
                   for event in self.sensor_buffer.events_history.history]
-        payload = {"data": events}
+        payload = {"monitoringID":str(self.uid),"data": events}
 
         print("sending sensor data...")
         r = requests.post("http://{}:{}/api/upload/bump-data".format(
@@ -123,8 +125,9 @@ class MainProcess():
     def upload_frames(self, attached_frames):
         files = [(file, open("{}/{}".format(self.config.frames_path, file), 'rb'))
                  for file in attached_frames]
+        headers= {"monitoringID": str(self.uid)}
         requests.post("http://{}:{}/api/upload/images".format(
-            self.config.edge_ip, self.config.edge_port), files=files)
+            self.config.edge_ip, self.config.edge_port), files=files, headers=headers)
         print("frames sent successfully!")
 
         for filename in os.listdir(self.config.frames_path):

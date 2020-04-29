@@ -63,7 +63,7 @@ if __name__ == '__main__':
     sensor_simulation = SimulateSensors(
         args.data_path, freq=1/config.sensors_freqHz, speed=args.speed, verbose=args.verbose)
     camera_simulation = SimulateCamera(
-        args.video_path, args.info_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose)
+        args.video_path, args.info_path, freq=1/config.camera_fps, speed=args.speed, verbose=args.verbose, preload=False)
     def on_end():
         X = np.array([main_process.sensor_buffer.timeseries_history])
         y_pred = np.array(
