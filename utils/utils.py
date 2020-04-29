@@ -1,6 +1,4 @@
-from matplotlib import pyplot as plt
 import math
-from matplotlib.animation import FuncAnimation
 import asyncio
 import websockets
 import json
@@ -8,6 +6,9 @@ import threading
 import time
 
 def show_animated_plot(fn_get_data, window_size=1000, freq=0.2, xlabel='Time', ylabel='Acc'):
+    from matplotlib import pyplot as plt
+    from matplotlib.animation import FuncAnimation
+
     ''' Show animetd plot of updated each 'freq' calling 'fn_get_data' '''
     fig, ax = plt.subplots()
     data = fn_get_data()

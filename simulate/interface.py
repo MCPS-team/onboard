@@ -2,8 +2,6 @@ import pandas as pd
 import threading
 import time
 from datetime import datetime
-from matplotlib import pyplot as plt
-from matplotlib.animation import FuncAnimation
 from utils import serve_websocket_data
 
 
