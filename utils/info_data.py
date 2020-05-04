@@ -26,7 +26,7 @@ parser.add_argument('frames_data_path',  type=str,
 args = parser.parse_args()
 
 senors_data = pd.read_csv(
-    args.sensor_data_path,  names=['timestamp', 'x', 'y', 'z', 'lat', 'lng', 'target'])  # TODO add 'lat' 'lng'
+    args.sensor_data_path,  names=['timestamp', 'x', 'y', 'z', 'lat', 'lng', 'target'])
 frames_index = pd.read_csv(args.frames_data_path, names=[
     'timestamp', 'frame_index'])
 
