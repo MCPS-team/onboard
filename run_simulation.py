@@ -52,8 +52,10 @@ if __name__ == '__main__':
     #         [main_process.sensor_buffer.timeseries_detected_history])
     #     print("IN DATA SHAPE", X.shape)
     #     print("OUT DATA SHAPE", y_pred.shape)
-    #     plt = plot_timeseries_clf(X, y_pred, transient=0)
-    #     plt.show()
+    #     # plt = plot_timeseries_clf(X, y_pred, transient=0)
+    #     # plt.show()
+    #     import pandas as pd
+    #     pd.DataFrame({"predicted":y_pred.tolist()}).to_csv("predicted.csv",header=None, index=None)
     # sensor_simulation.on_end(on_end)
 
     # camera_simulation =

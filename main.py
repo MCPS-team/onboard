@@ -55,6 +55,7 @@ class MainProcess():
         '''
         dist = euclidean_dist(lat_lng, self.config.depot_location)
         # 0.00001 degrees is about a meter
+        print("Is near depot", dist, lat_lng)
         if dist <= self.config.depot_radius and not self.checking_edge_connection:
             self.checking_edge_connection = setInterval(
                 self.config.retry_connection_delay, self.try_wireless_connection)

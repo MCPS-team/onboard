@@ -12,8 +12,8 @@
     "window_size": 50,
     "detect_delay": 10,
     "depot_location": [
-        10.4043385,
-        43.719696
+        43.7197266140625,
+        10.40512009375
     ],
     "depot_radius": 0.000000005,
     "sensors_freqHz": 9.85,
