@@ -6,7 +6,6 @@ from sklearn.utils.validation import check_is_fitted
 from . import DeepESN
 from tqdm import tqdm
 from copy import deepcopy
-import matplotlib.pyplot as plt
 import pickle
 from datetime import datetime
 import time
@@ -249,7 +248,7 @@ class DeepESN_skl(BaseEstimator, ClassifierMixin):
             print('|DD| THRESHOLDS: {}, eta:{}'.format(threshold_hist, eta))
 
         if plot:
-
+            import matplotlib.pyplot as plt
             plt.plot(range(start_from, l + 1), mu_ls, 'r--', label="mu")
             plt.plot(range(start_from, l), sigma_ls[:-1], 'b', label="sigma")
             plt.plot(range(start_from, l), threshold_hist,
