@@ -21,6 +21,6 @@
     "camera_buffer_size": 25,
     "retry_connection_delay": 1,
     "frames_path": "./frames/",
-    "edge_ip": "10.42.0.1",
+    "edge_ip": "192.168.1.54",
     "edge_port": "3000"
 }
