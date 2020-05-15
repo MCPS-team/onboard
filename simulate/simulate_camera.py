@@ -67,7 +67,7 @@ class SimulateCamera(BaseSimulation):
             timestamp = self.next_timestamp(frame_index)
             frame_index += 1
             if self.verbose:
-                print(f"frame {timestamp} red...")
+                print(f"frame {timestamp} read...")
             if ret == True:
                 frame_wrapped = FrameWrapper(frame, timestamp)
                 callback(frame_wrapped)
@@ -87,7 +87,7 @@ class SimulateCamera(BaseSimulation):
         _start = time.time()
         for frame in self.cached_frames:
             if self.verbose:
-                print(f"frame {frame.timestamp} red...")
+                print(f"frame {frame.timestamp} read...")
             callback(frame)
             time.sleep(self._freq-(time.time()-_start))
             _start = time.time()

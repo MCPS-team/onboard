@@ -55,7 +55,7 @@ class MainProcess():
         '''
         dist = euclidean_dist(lat_lng, self.config.depot_location)
         # 0.00001 degrees is about a meter
-        print("Is near depot", dist, lat_lng)
+        # print("Is near depot", dist, lat_lng)
         if dist <= self.config.depot_radius and not self.checking_edge_connection:
             self.checking_edge_connection = setInterval(
                 self.config.retry_connection_delay, self.try_wireless_connection)
@@ -118,7 +118,7 @@ class MainProcess():
         print("sending sensor data...")
         r = requests.post("http://{}:{}/api/upload/bump-data".format(
             self.config.edge_ip, self.config.edge_port), json=payload)
-        print(payload)
+        # print(payload)
         if r.status_code == 200:
             print("Data upload successfully!")
         return
